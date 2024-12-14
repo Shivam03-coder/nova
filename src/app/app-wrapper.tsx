@@ -1,6 +1,7 @@
 "use client";
 
 import StoreProvider from "@/store";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -14,9 +15,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
 const AppWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <StoreProvider>
-      <AppLayout>{children}</AppLayout>
-    </StoreProvider>
+    <ConvexClientProvider>
+      <StoreProvider>
+        <AppLayout>{children}</AppLayout>
+      </StoreProvider>
+    </ConvexClientProvider>
   );
 };
 
