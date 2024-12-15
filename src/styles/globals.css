@@ -61,27 +61,27 @@
   }
 
   h1 {
-    @apply font-inter text-5xl font-semibold leading-tight;
+    @apply text-5xl font-semibold leading-tight;
   }
 
   h2 {
-    @apply font-inter text-4xl font-bold leading-snug;
+    @apply text-4xl font-bold leading-snug;
   }
 
   h3 {
-    @apply font-inter text-3xl font-semibold leading-snug;
+    @apply text-3xl font-semibold leading-snug;
   }
 
   h4 {
-    @apply font-inter text-xl font-medium leading-snug;
+    @apply text-xl font-medium leading-snug;
   }
 
   h5 {
-    @apply font-inter text-lg font-medium leading-snug;
+    @apply text-lg font-medium leading-snug;
   }
 
   h6 {
-    @apply font-inter text-base font-medium leading-snug;
+    @apply text-base font-medium leading-snug;
   }
 }
 
@@ -130,4 +130,14 @@
 
 .cl-userButtonPopoverCard {
   background-color: var(--color-secondary);
+}
+
+.tiptap.ProseMirror {
+  outline: none;
+}
+
+.is-active {
+  background-color: #fdecec;
+  border-radius: 4px;
+  padding: 2px 2px;
 }

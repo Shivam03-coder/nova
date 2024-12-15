@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import "@/styles/globals.css";
 import { inter, poppins, lexend, manrope, spaceGrotesk } from "@/fonts";
 import { ClerkProvider } from "@clerk/nextjs";
-import AppWrapper from "./app-wrapper";
+import AppProvider from "@/components/shared/providers/app-provider";
 
 export const metadata: Metadata = {
   title: "NOVA-X",
@@ -19,7 +19,7 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} ${lexend.variable} ${manrope.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <body>
-            <AppWrapper>{children}</AppWrapper>
+            <AppProvider>{children}</AppProvider>
         </body>
       </html>
     </ClerkProvider>
