@@ -9,7 +9,7 @@ export async function GetUserInfo() {
     return null;
   }
 
-  const { emailAddresses, firstName, lastName } = user;
+  const { emailAddresses, firstName, lastName, id } = user;
 
   const username = `${firstName} ${lastName}`.trim();
 
@@ -20,5 +20,6 @@ export async function GetUserInfo() {
   return {
     username,
     useremail: plainEmailAddresses,
+    userId: id,
   };
 }

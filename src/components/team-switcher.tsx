@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  Bot,
   ChevronsUpDown,
   CopyPlus,
   Pencil,
@@ -25,19 +26,25 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import TooltipBtn from "./tool-tip-btn";
+import TeamModal from "./shared/modals/team-name-modal";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { useLocalStorage } from "usehooks-ts";
+import FileModal from "./shared/modals/file-name-modal";
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    teamname: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
+export function TeamSwitcher() {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [userId] = useLocalStorage("userId", "");
+  const teams = useQuery(api.team.getTeamname, { userId });
+  const [activeTeam, setActiveTeam] = React.useState();
   const { state: SidebarState } = useSidebar();
+  const [TeamId, setTeamId] = useLocalStorage<string>("TeamId", "");
+
+  React.useEffect(() => {
+    if (teams) {
+      setActiveTeam(teams[0]);
+    }
+  }, [teams]);
 
   return (
     <SidebarMenu className="space-y-4">
@@ -64,57 +71,60 @@ export function TeamSwitcher({
           </SidebarMenuButton>
         </DropdownMenu>
       </SidebarMenuItem>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="bg-primary data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
-                <CopyPlus className="size-5" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam?.teamname}
-                </span>
-                <span className="truncate text-xs">{activeTeam?.plan}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-paleblue"
-            align="start"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
-            </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.teamname}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
+
+      {teams?.length !== 0 && (
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton
+                size="lg"
+                className="bg-primary data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
+                  <CopyPlus className="size-5" />
                 </div>
-                {team.teamname}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="bg-background flex size-6 items-center justify-center rounded-md border">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">Add team</div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    {
+                      // @ts-ignore
+                      activeTeam?.teamName
+                    }
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-auto" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-paleblue"
+              align="start"
+              side={isMobile ? "bottom" : "right"}
+              sideOffset={4}
+            >
+              <DropdownMenuLabel className="text-muted-foreground text-xs">
+                Teams
+              </DropdownMenuLabel>
+              {teams?.map((team, index) => (
+                <DropdownMenuItem
+                  key={team.teamName}
+                  onClick={() => {
+                    setActiveTeam(team);
+                    setTeamId(team._id);
+                  }}
+                  className="gap-2 p-2"
+                >
+                  <div className="flex size-6 items-center justify-center rounded-sm border">
+                    <Bot className="size-4 shrink-0" />
+                  </div>
+                  {team.teamName}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      )}
+      <TeamModal userId={userId} />
+      <FileModal userId={userId} />
     </SidebarMenu>
   );
 }
