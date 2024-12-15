@@ -50,14 +50,9 @@
 
 @layer base {
   :root {
-    --color-primary: #001f3f;
+    --color-primary: #0D92F4;
     --color-secondary: #f2f8ff;
-    --color-tertiary: #fafbff;
-    --color-palebdanger: #fdecec;
-    --color-light: #ffffff;
     --color-paleblue: #d4e7fc;
-    --color-paledark: #f7f9fb;
-    --color-darkred: #1c1c1c;
   }
 
   h1 {
