@@ -31,8 +31,7 @@ const TeamModal = ({ userId }: { userId: string }) => {
         TeamName,
         userId,
       });
-      console.log("API Response:", response);
-
+      
       setIsDialogOpen(false);
       setTeamName("");
 

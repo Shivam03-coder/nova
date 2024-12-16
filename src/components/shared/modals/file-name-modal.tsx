@@ -17,35 +17,37 @@ import { useState } from "react";
 import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 
-const FileModal = ({ userId }: { userId: string }) => {
+const FileModal = ({ TeamId }: { TeamId: string }) => {
   const { toast } = useToast();
   const { open: isSidebarOpen } = useSidebar();
   const [FileName, setFileName] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const fileNameMutation = useMutation(api.file.createFile);
 
   // Handle save button click
   const handleSave = async () => {
-    if (!FileName.trim()) {
-      toast({
-        title: "Team Name Required",
-        description: "Please enter a team name.",
-        className: "bg-red-400 text-black rounded-xl",
-      });
-      return;
-    }
-
     try {
-      toast({
-        title: "File Created Successfully",
-        description: `File ${FileName} has been created.`,
-        className: "bg-green-400 text-black rounded-xl",
+      const res = await fileNameMutation({
+        fileName: FileName.trim(),
+        teamId: TeamId,
       });
-      setIsDialogOpen(false); // Close dialog after successful team creation
-      setFileName(""); // Clear input field
+
+      console.log(res);
+
+      if (res) {
+        toast({
+          title: "File Created Successfully",
+          description: `File "${FileName}" has been created.`,
+          className: "bg-green-400 text-black rounded-xl",
+        });
+      }
+
+      setIsDialogOpen(false);
+      setFileName("");
     } catch (error) {
       toast({
         title: "Error",
-        description: "There was an error creating the team. Please try again.",
+        description: "There was an error creating the file. Please try again.",
         className: "bg-red-400 text-black rounded-xl",
       });
     }
@@ -56,7 +58,7 @@ const FileModal = ({ userId }: { userId: string }) => {
       <DialogTrigger className="bg-primary" asChild>
         {isSidebarOpen ? (
           <Button
-            className="flex justify-start gap-2 !py-6 pl-4 font-inter font-semibold "
+            className="flex justify-start gap-2 !py-6 pl-4 font-inter font-semibold"
             variant="outline"
           >
             <FolderPlus className="size-10" /> Create new file

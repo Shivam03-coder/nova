@@ -124,7 +124,7 @@ export function TeamSwitcher() {
         </SidebarMenuItem>
       )}
       <TeamModal userId={userId} />
-      <FileModal userId={userId} />
+      <FileModal TeamId={TeamId} />
     </SidebarMenu>
   );
 }
