@@ -10,7 +10,6 @@ export function FileProgress() {
   const [progress, setProgress] = React.useState(13);
   const [teamId] = useLocalStorage<string>("TeamId", "");
   const files = useQuery(api.file.getTotalNumberOfFiles, { teamId });
-  console.log("🚀 ~ FileProgress ~ files:", files);
 
   React.useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500);
