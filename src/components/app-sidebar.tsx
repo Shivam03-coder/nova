@@ -25,21 +25,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { FileProgress } from "./file-progress";
 
 // This is sample data.
 const data = {
-  teams: [
-    {
-      teamname: "ALPHA-ABC",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      teamname: "ALPHA-ABCD",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -148,15 +137,16 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar className="h-[94%] my-auto border rounded-3xl mx-1" collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavMain items={data.navMain} /> */}
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
+        <FileProgress />
         <NavUser />
       </SidebarFooter>
       <SidebarRail />
