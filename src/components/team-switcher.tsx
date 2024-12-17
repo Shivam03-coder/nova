@@ -31,17 +31,24 @@ import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import FileModal from "./shared/modals/file-name-modal";
+import { useRouter } from "next/navigation";
+
+type Team = {
+  _id: string;
+  teamName: string;
+};
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
   const [userId] = useLocalStorage("userId", "");
   const teams = useQuery(api.team.getTeamname, { userId });
-  const [activeTeam, setActiveTeam] = React.useState();
+  const [activeTeam, setActiveTeam] = React.useState<Team | undefined>(undefined);
   const { state: SidebarState } = useSidebar();
   const [TeamId, setTeamId] = useLocalStorage<string>("TeamId", "");
+  const Router = useRouter();
 
   React.useEffect(() => {
-    if (teams) {
+    if (teams && teams.length > 0) {
       setActiveTeam(teams[0]);
     }
   }, [teams]);
@@ -61,10 +68,10 @@ export function TeamSwitcher() {
                 </span>
               </TooltipBtn>
             ) : (
-              <div className="mx-auto flex items-center justify-center gap-5">
+              <div onClick={() => Router.push("/")} className="mx-auto flex items-center justify-center gap-5">
                 <PencilIcon size={19} className="text-secondary" />
                 <div className="flex-1 text-left font-inter text-sm font-semibold leading-tight">
-                  NOVA-X-TEXT-EDITIOR
+                  NOVA-X-TEXT-EDITOR
                 </div>
               </div>
             )}
@@ -83,12 +90,12 @@ export function TeamSwitcher() {
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
                   <CopyPlus className="size-5" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div
+                  onClick={() => Router.push("/")}
+                  className="grid flex-1 text-left text-sm leading-tight"
+                >
                   <span className="truncate font-semibold">
-                    {
-                      // @ts-ignore
-                      activeTeam?.teamName
-                    }
+                    {activeTeam?.teamName || "Select a Team"}
                   </span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
@@ -103,9 +110,9 @@ export function TeamSwitcher() {
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Teams
               </DropdownMenuLabel>
-              {teams?.map((team, index) => (
+              {teams?.map((team) => (
                 <DropdownMenuItem
-                  key={team.teamName}
+                  key={team._id}
                   onClick={() => {
                     setActiveTeam(team);
                     setTeamId(team._id);

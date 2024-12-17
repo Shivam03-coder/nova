@@ -1,17 +1,15 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
-import { api } from "convex/_generated/api";
-import { useQueries } from "convex/react";
-import React, { useEffect } from "react";
+import React from "react";
+import Header from "./components/navbar";
+import MainLayout from "./components/main-layout";
 
-const HOMEPAGE = () => {
-  useEffect(() => {}, []);
-
+const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
-      <UserButton />
-    </div>
+    <>
+      <Header />
+      <MainLayout />
+    </>
   );
 };
 
-export default HOMEPAGE;
+export default HomeLayout;
