@@ -21,20 +21,7 @@ import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import { useQuery } from "convex/react";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+export function NavMain() {
   const [teamId] = useLocalStorage<string>("TeamId", "");
   const item = useQuery(api.file.geFiles, { teamId });
   const [FileId, setFileId] = useLocalStorage<string>("FileId", "");

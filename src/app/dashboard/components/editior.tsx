@@ -1,12 +1,36 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import { PencilIcon, Save } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
+
+const rawDocument={
+  "time" : 1550476186479,
+  "blocks" : [{
+      data:{
+          text:'Document Name',
+          level:2
+      },
+      id:"123",
+      type:'header'
+  },
+  {
+      data:{
+          level:4
+      },
+      id:"1234",
+      type:'header'
+  }],
+  "version" : "2.8.1"
+}
 
 const Editor = () => {
   const docRef = useRef<EditorJS | null>(null);
+  const [document,setDocument]=useState(rawDocument);
+  const updateDocument = useMutation(api.file.UpdatedDoc);
 
   const initEditor = () => {
     if (!docRef.current) {
@@ -45,6 +69,10 @@ const Editor = () => {
     if (docRef.current) {
       try {
         const outputData = await docRef.current.save();
+
+        {
+          updateDocument;
+        }
         console.log("Saved data:", outputData);
       } catch (error) {
         console.error("Error saving editor content:", error);
