@@ -56,7 +56,7 @@ export function NavMain() {
                 <span>{item.fileName}</span>
                 <Trash2Icon
                   onClick={handlefileDelete}
-                  className="mx-auto ml-4 float-right"
+                  className="mx-auto ml-4 "
                   color="red"
                   size={30}
                 />

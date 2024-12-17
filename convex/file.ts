@@ -94,16 +94,26 @@ export const UpdatedDoc = mutation({
     doc: v.string(),
   },
   handler: async (ctx, args) => {
+    // Check if the file exists
     const fileExists = await ctx.db
       .query("files")
-      .filter((q) => q.eq(q.field("_id"), args.fileId));
+      .filter((q) => q.eq(q.field("_id"), args.fileId))
+      .first();
 
-    if (fileExists) throw new ConvexError("FILE NOT FOUND");
+    if (!fileExists) {
+      throw new ConvexError("FILE NOT FOUND");
+    }
 
-    const res = await ctx.db.insert("files", {
-      doc: args.doc,
+    // Update the document field in the database
+    await ctx.db.patch(fileExists._id, {
+      document: args.doc,
     });
 
-    return res;
+    // Return a success response
+    return {
+      success: true,
+      message: "Document updated successfully!",
+      updatedDocumentId: fileExists._id,
+    };
   },
 });

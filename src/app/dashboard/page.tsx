@@ -8,7 +8,9 @@ const DashboardPage = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 lg:flex-row">
-      <Editior />
+    <div className="flex flex-1">
+    <Editior />
+    </div>
     </div>
   );
 };

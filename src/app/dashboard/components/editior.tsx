@@ -1,6 +1,7 @@
 "use client";
+
 import React, { useEffect, useRef, useState } from "react";
-import EditorJS from "@editorjs/editorjs";
+import EditorJS, { OutputData } from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 // @ts-ignore
@@ -10,39 +11,44 @@ import InlineCode from "@editorjs/inline-code";
 import { PencilIcon, Save } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import { useReadLocalStorage } from "usehooks-ts";
+import { useToast } from "@/hooks/use-toast";
 
-const rawDocument = {
-  time: 1550476186479,
+const initialDocument: OutputData = {
+  time: Date.now(),
   blocks: [
     {
+      id: "1",
+      type: "header",
       data: {
-        text: "Document Name",
+        text: "NOVA TEXT EDITOR",
         level: 2,
       },
-      id: "123",
-      type: "header",
     },
     {
+      id: "2",
+      type: "header",
       data: {
+        text: "Your content starts here...",
         level: 4,
       },
-      id: "1234",
-      type: "header",
     },
   ],
-  version: "2.8.1",
+  version: "2.27.0", // Latest Editor.js version
 };
 
 const Editor = () => {
-  const docRef = useRef<EditorJS | null>(null);
-  const [document, setDocument] = useState(rawDocument);
+  const editorInstance = useRef<EditorJS | null>(null);
   const updateDocument = useMutation(api.file.UpdatedDoc);
+  const FileId = useReadLocalStorage<string>("FileId");
+  const { toast } = useToast();
 
-  const initEditor = () => {
-    if (!docRef.current) {
-      docRef.current = new EditorJS({
+  // Initialize Editor.js
+  const initializeEditor = () => {
+    if (!editorInstance.current) {
+      editorInstance.current = new EditorJS({
         holder: "editorjs",
-        placeholder: "EDIT TEXT WITH NOVA",
+        placeholder: "Start editing with AI NOVA...",
         tools: {
           header: {
             // @ts-ignore
@@ -51,6 +57,7 @@ const Editor = () => {
           },
           list: {
             // @ts-ignore
+
             class: List,
             inlineToolbar: true,
           },
@@ -71,52 +78,77 @@ const Editor = () => {
             },
           },
         },
+        data: initialDocument,
+        onReady: () => {
+          console.log("Editor.js is ready to use!");
+        },
       });
     }
   };
 
   useEffect(() => {
-    initEditor();
+    initializeEditor();
 
     return () => {
-      // Cleanup the editor instance
-      if (docRef.current) {
-        docRef.current.destroy();
-        docRef.current = null;
+      if (editorInstance.current) {
+        editorInstance.current.destroy();
+        editorInstance.current = null;
       }
     };
   }, []);
 
+  // Save content to the backend
   const handleSave = async () => {
-    if (docRef.current) {
-      try {
-        const outputData = await docRef.current.save();
-        console.log("🚀 ~ handleSave ~ outputData:", outputData)
-        {
-          updateDocument;
-        }
-        console.log("Saved data:", outputData);
-      } catch (error) {
-        console.error("Error saving editor content:", error);
-      }
-    } else {
+    if (!editorInstance.current) {
       console.error("Editor instance is not initialized.");
+      return;
+    }
+
+    try {
+      const outputData = await editorInstance.current.save();
+      if (!FileId) throw new Error("FileId is missing!");
+
+      const response = await updateDocument({
+        fileId: FileId,
+        doc: JSON.stringify(outputData),
+      });
+
+      console.log(response)
+
+      if (response) {
+        toast({
+          title: "Document saved successfully!",
+          description: "Your changes have been saved.",
+          className: "bg-green-400 text-black rounded-xl",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving editor content:", error);
+      toast({
+        title: "Error saving document",
+        description: "Something went wrong. Please try again.",
+        className: "bg-red-500 text-white rounded-xl",
+      });
     }
   };
 
   return (
-    <div className="min-h-[100vh] flex-1 rounded border-2 border-black bg-white p-3 shadow-2xl md:min-h-[100vh]">
-      <h5 className="inline-flex w-auto items-center gap-3 rounded-lg bg-primary p-2 text-secondary">
-        <PencilIcon />
-        AI NOVA TEXT EDITOR
-      </h5>
-      <button
-        onClick={handleSave}
-        className="ml-5 inline-flex w-auto items-center gap-3 rounded-lg bg-primary p-2 text-secondary"
-      >
-        <Save />
-      </button>
-      <div className="mt-7 h-[100vh] overflow-y-scroll" id="editorjs" />
+    <div className="min-h-screen flex-1 rounded border-2 border-black bg-white p-3 shadow-2xl">
+      <div className="flex items-center gap-4">
+        <h5 className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-secondary">
+          <PencilIcon /> AI NOVA TEXT EDITOR
+        </h5>
+        <button
+          onClick={handleSave}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-secondary"
+        >
+          <Save /> Save Document
+        </button>
+      </div>
+      <div
+        id="editorjs"
+        className="mt-5 h-[80vh] overflow-y-auto rounded-md border p-2"
+      />
     </div>
   );
 };
