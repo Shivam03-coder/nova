@@ -5,6 +5,7 @@ export const createFile = mutation({
   args: {
     teamId: v.string(),
     fileName: v.string(),
+    document: v.string(),
   },
   handler: async (ctx, args) => {
     const [TeamExists, fileExists] = await Promise.all([
@@ -29,9 +30,32 @@ export const createFile = mutation({
     const res = await ctx.db.insert("files", {
       teamId: args.teamId,
       fileName: args.fileName,
+      document: args.document,
     });
 
     return res;
+  },
+});
+
+export const deleteFile = mutation({
+  args: {
+    FileId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const fileExists = await ctx.db
+      .query("files")
+      .filter((q) => q.eq(q.field("_id"), args.FileId))
+      .first();
+
+    if (!fileExists) {
+      // Throw an error if the file does not exist
+      throw new Error("FILE DOES NOT EXIST");
+    }
+
+    // Delete the file from the 'files' table
+    await ctx.db.delete(fileExists._id);
+
+    return { success: true, message: "File deleted successfully" };
   },
 });
 
@@ -48,6 +72,7 @@ export const getTotalNumberOfFiles = query({
     return files.length;
   },
 });
+
 export const geFiles = query({
   args: {
     teamId: v.string(),

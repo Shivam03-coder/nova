@@ -1,30 +1,41 @@
 "use client";
 
-import { ChevronRight, File, type LucideIcon } from "lucide-react";
+import { File, Trash2Icon } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { useToast } from "@/hooks/use-toast";
 
 export function NavMain() {
   const [teamId] = useLocalStorage<string>("TeamId", "");
   const item = useQuery(api.file.geFiles, { teamId });
   const [FileId, setFileId] = useLocalStorage<string>("FileId", "");
+  const DeleteFile = useMutation(api.file.deleteFile);
+  const { toast } = useToast();
+  const handlefileDelete = async () => {
+    try {
+      const resp = await DeleteFile({ FileId });
+      console.log("🚀 ~ handlefileDelete ~ resp:", resp);
+      if (resp) {
+        toast({
+          title: "File Deleted Successfully",
+          description: `File has been created.`,
+          className: "bg-green-400 text-black rounded-xl",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SidebarGroup>
@@ -43,6 +54,12 @@ export function NavMain() {
               <SidebarMenuButton tooltip={item.fileName}>
                 <File />
                 <span>{item.fileName}</span>
+                <Trash2Icon
+                  onClick={handlefileDelete}
+                  className="mx-auto ml-4 float-right"
+                  color="red"
+                  size={30}
+                />
               </SidebarMenuButton>
             </SidebarMenuItem>
           </Collapsible>

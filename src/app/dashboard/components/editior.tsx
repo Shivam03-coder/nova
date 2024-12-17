@@ -3,33 +3,39 @@ import React, { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
+// @ts-ignore
+import SimpleImage from "@editorjs/simple-image";
+import Table from "@editorjs/table";
+import InlineCode from "@editorjs/inline-code";
 import { PencilIcon, Save } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
 
-const rawDocument={
-  "time" : 1550476186479,
-  "blocks" : [{
-      data:{
-          text:'Document Name',
-          level:2
+const rawDocument = {
+  time: 1550476186479,
+  blocks: [
+    {
+      data: {
+        text: "Document Name",
+        level: 2,
       },
-      id:"123",
-      type:'header'
-  },
-  {
-      data:{
-          level:4
+      id: "123",
+      type: "header",
+    },
+    {
+      data: {
+        level: 4,
       },
-      id:"1234",
-      type:'header'
-  }],
-  "version" : "2.8.1"
-}
+      id: "1234",
+      type: "header",
+    },
+  ],
+  version: "2.8.1",
+};
 
 const Editor = () => {
   const docRef = useRef<EditorJS | null>(null);
-  const [document,setDocument]=useState(rawDocument);
+  const [document, setDocument] = useState(rawDocument);
   const updateDocument = useMutation(api.file.UpdatedDoc);
 
   const initEditor = () => {
@@ -47,6 +53,22 @@ const Editor = () => {
             // @ts-ignore
             class: List,
             inlineToolbar: true,
+          },
+          image: SimpleImage,
+          inlineCode: {
+            class: InlineCode,
+            shortcut: "CMD+SHIFT+M",
+          },
+          table: {
+            // @ts-ignore
+            class: Table,
+            inlineToolbar: true,
+            config: {
+              rows: 2,
+              cols: 3,
+              maxRows: 5,
+              maxCols: 5,
+            },
           },
         },
       });
@@ -69,7 +91,7 @@ const Editor = () => {
     if (docRef.current) {
       try {
         const outputData = await docRef.current.save();
-
+        console.log("🚀 ~ handleSave ~ outputData:", outputData)
         {
           updateDocument;
         }

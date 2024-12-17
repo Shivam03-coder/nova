@@ -30,6 +30,7 @@ const FileModal = ({ TeamId }: { TeamId: string }) => {
       const res = await fileNameMutation({
         fileName: FileName.trim(),
         teamId: TeamId,
+        document: "",
       });
 
       console.log(res);
