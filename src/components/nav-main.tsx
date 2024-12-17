@@ -21,27 +21,38 @@ export function NavMain() {
   const [FileId, setFileId] = useLocalStorage<string>("FileId", "");
   const DeleteFile = useMutation(api.file.deleteFile);
   const { toast } = useToast();
+
   const handlefileDelete = async () => {
     try {
       const resp = await DeleteFile({ FileId });
       console.log("🚀 ~ handlefileDelete ~ resp:", resp);
-      if (resp) {
+      if (resp.success) {
         toast({
           title: "File Deleted Successfully",
-          description: `File has been created.`,
+          description: "The file has been deleted.",
           className: "bg-green-400 text-black rounded-xl",
         });
       }
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Error",
+        description: "Unable to delete the file.",
+        className: "bg-red-400 text-white rounded-xl",
+      });
     }
   };
+
+  // Check if there are no files and render nothing or a fallback message
+  if (!item) {
+    return null; // Do not render anything if no files exist
+  }
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>FILES</SidebarGroupLabel>
       <SidebarMenu>
-        {item?.map((item) => (
+        {item.files?.map((item) => (
           <Collapsible
             onClick={() => setFileId(item._id)}
             key={item._id}
@@ -49,14 +60,18 @@ export function NavMain() {
             className="group/collapsible"
           >
             <SidebarMenuItem
-              className={`h my-3 rounded bg-white hover:bg-white ${FileId === item._id ? "bg-primary text-secondary hover:bg-primary hover:text-secondary" : ""}`}
+              className={`my-3 rounded bg-white hover:bg-white ${
+                FileId === item._id
+                  ? "bg-primary text-secondary hover:bg-primary hover:text-secondary"
+                  : ""
+              }`}
             >
               <SidebarMenuButton tooltip={item.fileName}>
                 <File />
                 <span>{item.fileName}</span>
                 <Trash2Icon
                   onClick={handlefileDelete}
-                  className="mx-auto ml-4 "
+                  className="mx-auto ml-4 cursor-pointer"
                   color="red"
                   size={30}
                 />

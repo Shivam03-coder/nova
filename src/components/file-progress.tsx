@@ -19,8 +19,8 @@ export function FileProgress() {
 
   return (
     <aside className="flex flex-col gap-2 font-lexend">
-      <h6>Files {files}/5</h6>
-      <Progress value={files} className="mx-auto bg-black text-red-500" />
+      <h6>Files {files?.totalFiles}/5</h6>
+      <Progress value={files?.totalFiles} className="mx-auto bg-black text-red-500" />
     </aside>
   );
 }

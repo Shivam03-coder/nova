@@ -32,15 +32,6 @@ const Hedaer = () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex items-center gap-2 px-4">
-          <div className="flex flex-1 items-center gap-3 rounded bg-blue-300 px-2">
-            <Search size={24} />
-            <Input className="border-none bg-transparent outline-none" />
-          </div>
-          <Button className="text-white">
-            INVITE <Share />
-          </Button>
-        </div>
       </nav>
     </header>
   );
