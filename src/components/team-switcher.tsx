@@ -28,7 +28,7 @@ import { useQuery } from "convex/react";
 import { useLocalStorage } from "usehooks-ts";
 import FileModal from "./shared/modals/file-name-modal";
 import { useRouter } from "next/navigation";
-import { api } from "../../convex/_generated/api";
+import { api } from "convex/_generated/api";
 type Team = {
   _id: string;
   teamName: string;
