@@ -14,19 +14,22 @@ import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import { useMutation, useQuery } from "convex/react";
 import { useToast } from "@/hooks/use-toast";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { setFileID } from "@/store/states/gobal-state";
 
 export function NavMain() {
   const [teamId] = useLocalStorage<string>("TeamId", "");
   const item = useQuery(api.file.geFiles, { teamId });
-  const [FileId, setFileId] = useLocalStorage<string>("FileId", "");
   const DeleteFile = useMutation(api.file.deleteFile);
   const { toast } = useToast();
+  const Dispatch = useAppDispatch();
+  const { FileId } = useAppSelector((state) => state.account);
 
   const handlefileDelete = async () => {
     try {
       const resp = await DeleteFile({ FileId });
-      console.log("🚀 ~ handlefileDelete ~ resp:", resp);
       if (resp.success) {
+        Dispatch(setFileID(""));
         toast({
           title: "File Deleted Successfully",
           description: "The file has been deleted.",
@@ -54,7 +57,7 @@ export function NavMain() {
       <SidebarMenu>
         {item.files?.map((item) => (
           <Collapsible
-            onClick={() => setFileId(item._id)}
+            onClick={() => Dispatch(setFileID(item._id))}
             key={item._id}
             asChild
             className="group/collapsible"

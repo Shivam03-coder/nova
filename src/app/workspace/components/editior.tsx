@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import { useToast } from "@/hooks/use-toast";
+import { useAppSelector } from "@/store";
 
 // Default document content
 const initialDocument: OutputData = {
@@ -33,25 +34,20 @@ const initialDocument: OutputData = {
 };
 
 const Editor = () => {
+  const { FileId } = useAppSelector((state) => state.account);
+  const [TeamId] = useLocalStorage("TeamId", "");
   const editorInstance = useRef<EditorJS | null>(null);
   const fetchedDataRef = useRef(false); // To prevent duplicate fetching
   const [document, setDocument] = useState<OutputData | null>(null);
-
-  const [FileId] = useLocalStorage("FileId", "");
-  const [TeamId] = useLocalStorage("TeamId", "");
   const { toast } = useToast();
   const updateDocument = useMutation(api.file.UpdatedDoc);
 
-  // Fetch file data if FileId is available
-  const fileData = FileId
-    ? useQuery(api.file.GetFileDataById, { fileId: FileId! })
-    : null;
+  // Query for file data
+  const fileData = useQuery(api.file.GetFileDataById, { fileId: FileId });
 
-  // Load document content
   useEffect(() => {
-    if (FileId && fileData?.file && !fetchedDataRef.current) {
-      fetchedDataRef.current = true;
-
+    // Whenever FileId changes, fetch the new document data
+    if (FileId && fileData?.file) {
       try {
         const savedDocument = fileData.file?.document
           ? JSON.parse(fileData.file.document)
@@ -73,47 +69,40 @@ const Editor = () => {
         });
       }
     }
-  }, [FileId, fileData, TeamId, toast]); // Now depends on both FileId and TeamId
+  }, [FileId, fileData, toast]); // Re-fetch when FileId or fileData changes
 
-  // Initialize the editor when the document is loaded or when FileId or TeamId changes
-  const initializeEditor = () => {
+  // Initialize the editor when the document is loaded or when FileId changes
+  useEffect(() => {
+    // Ensure the editor div is present before initializing
+
     if (document && !editorInstance.current) {
       editorInstance.current = new EditorJS({
         holder: "editorjs",
         placeholder: "Start editing with AI NOVA...",
         tools: {
+          // @ts-ignore
           header: { class: Header, inlineToolbar: ["link"] },
+          // @ts-ignore
           list: { class: List, inlineToolbar: true },
           image: SimpleImage,
+          // @ts-ignore
           inlineCode: { class: InlineCode, shortcut: "SHIFT+M" },
+          // @ts-ignore
           table: { class: Table, inlineToolbar: true },
         },
         data: document,
         onReady: () => console.log("Editor.js is ready to use!"),
       });
     }
-  };
 
-  // Cleanup and reinitialize editor when FileId or TeamId changes
-  useEffect(() => {
-    // Destroy the existing editor instance if it exists
-    if (editorInstance.current) {
-      editorInstance.current.destroy();
-      editorInstance.current = null;
-    }
-
-    // Re-initialize the editor with the new document content
-    if (document) {
-      initializeEditor();
-    }
-
+    // Cleanup editor instance on component unmount or when FileId or document changes
     return () => {
       if (editorInstance.current) {
         editorInstance.current.destroy();
         editorInstance.current = null;
       }
     };
-  }, [FileId, TeamId, document]); // Runs whenever FileId, TeamId, or document changes
+  }, [FileId, document]); // Reinitialize the editor whenever FileId or document changes
 
   // Handle saving the document content
   const handleSave = async () => {
@@ -155,7 +144,7 @@ const Editor = () => {
     <div className="flex-1 rounded border-2 border-black bg-white p-3 shadow-2xl">
       <div className="flex items-center gap-4">
         <h5 className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-secondary">
-          <PencilIcon /> AI NOVA TEXT EDITOR
+          <PencilIcon /> NOVA TEXT EDITOR
         </h5>
         {FileId && (
           <button

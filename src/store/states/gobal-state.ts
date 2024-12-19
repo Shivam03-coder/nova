@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface initialStateTypes {
-  isSheetEditiorOpen: boolean;
+  FileId: string;
 }
 
 const initialState: initialStateTypes = {
-  isSheetEditiorOpen: false,
+  FileId: "",
 };
 
 export const accountState = createSlice({
   name: "app-state",
   initialState,
   reducers: {
-    setIsSheetEditiorOpen: (state) => {
-      state.isSheetEditiorOpen = !state.isSheetEditiorOpen;
+    setFileID: (state, actions: PayloadAction<string>) => {
+      state.FileId = actions.payload;
     },
   },
 });
 
-export const { setIsSheetEditiorOpen } = accountState.actions;
+export const { setFileID } = accountState.actions;

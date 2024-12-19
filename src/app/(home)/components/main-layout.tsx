@@ -24,7 +24,12 @@ const MainLayout = () => {
           className="bg-primary p-4 px-5 text-xl font-medium text-secondary lg:text-3xl"
           color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
         >
-          NOVA-X TEXT EDITOR
+          <button
+            onClick={() => Router.push("/workspace")}
+            className="h-full w-full"
+          >
+            GO TO NOVA-X TEXT EDITOR
+          </button>
         </ShineBorder>
 
         <header className="space-y-4 px-4 text-center">
