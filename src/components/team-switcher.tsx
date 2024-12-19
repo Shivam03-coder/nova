@@ -5,9 +5,7 @@ import {
   Bot,
   ChevronsUpDown,
   CopyPlus,
-  Pencil,
   PencilIcon,
-  Plus,
 } from "lucide-react";
 
 import {
@@ -16,7 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -28,11 +25,10 @@ import {
 import TooltipBtn from "./tool-tip-btn";
 import TeamModal from "./shared/modals/team-name-modal";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import FileModal from "./shared/modals/file-name-modal";
 import { useRouter } from "next/navigation";
-
+import { api } from "../../convex/_generated/api";
 type Team = {
   _id: string;
   teamName: string;

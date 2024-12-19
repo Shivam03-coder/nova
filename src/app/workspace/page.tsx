@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import { PencilIcon, Save } from "lucide-react";
 import Editior from "./components/editior";
-import { useLocalStorage } from "usehooks-ts";
 import NotSelectedFile from "./components/filenot";
 import { useAppSelector } from "@/store";
 

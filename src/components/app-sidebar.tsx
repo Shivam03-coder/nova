@@ -1,19 +1,6 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -24,7 +11,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { FileProgress } from "./file-progress";
+import { FileProgress } from "@/components/file-progress"; // Ensure correct path for file-progress
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

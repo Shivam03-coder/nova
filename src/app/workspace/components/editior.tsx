@@ -10,7 +10,7 @@ import Table from "@editorjs/table";
 import InlineCode from "@editorjs/inline-code";
 import { PencilIcon, Save } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { useLocalStorage } from "usehooks-ts";
 import { useToast } from "@/hooks/use-toast";
 import { useAppSelector } from "@/store";
